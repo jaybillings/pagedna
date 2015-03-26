@@ -1,0 +1,107 @@
+<html>
+<head>
+<style>
+table, th, td {
+   border: 1px solid black;
+   width: 200px;
+   margin-bottom: 1em;
+}
+div {
+  width: 80%;
+}
+</style>
+</head>
+<body>
+<div>
+<h2>UI Implementation Test:</h2>
+
+The purpose of this test is to construct an HTML table with two columns, representing the states: 'A', and 'B'. In each row there are four colored boxes, which may be moved back and forth between the two columns by clicking on them. Each row has a specific relative sequence the colors must retain as boxes are moved between columns.
+<p>
+<h4>Initial Data</h4>
+You have been provided with a json-formatted data file (rows.json) for this test. In your test application, you must access this resource by way of an ajax call, and use it to initialize your user interface. The data in the file is an array of object literals, each representing a row for your table. Each object literal has two properties:
+
+<blockquote>
+"sequence" -> defines the required relative sequence of colors for that row 
+
+           and
+
+            "states" -> specifies the initial state for each color in that row, i.e. whether it starts in the 'A' or 'B' column on page load
+</blockquote>
+<p>
+
+<h4>Moving Boxes</h4>
+If your table has one non-header row, and starts like:
+<p>
+<table>
+<tr><th>A</th><th>B</th></tr></tr>
+<tr><td>[b][y][o][r]</td><td>&nbsp;</td></tr>
+</table>
+
+You should be able to click [y] and [r], and end up with a row that looks like:
+<p>
+
+<table>
+<tr><th>A</th><th>B</th></tr>
+<tr><td>[b][o]</td><td>[y][r]</td></tr>
+</table>
+
+Note that each cell in the row will retain the original relative sequence: in this example: "b", "y", "o", "r", i.e. [b] comes before [o], and [y] comes before [r].
+<p>
+
+Clicking on [y] and [r] again will move them back to column 'A', restoring you to the original state.
+<p>
+
+<h4>Column Count</h4>
+Your UI should maintain a running count of how many colored boxes there are in each column in the headers for each column. The following example has three rows:
+
+<table>
+<tr><th>A (5)</th><th>B (7)</th></tr>
+<tr><td>[b]</td><td>[y][r][o]</td></tr>
+<tr><td>[y][r]</td><td>[b][o]</td></tr>
+<tr><td>[b][o]</td><td>[y][r]</td></tr>
+</table>
+
+
+Clicking on [o] in row 2, column 'B' will move [o] to column 'A' and update counts in the headers:
+<p>
+
+<table>
+<tr><th>A (6)</th><th>B (6)</th></tr>
+<tr><td>[b]</td><td>[y][r][o]</td></tr>
+<tr><td>[y][r][o]</td><td>[b]</td></tr>
+<tr><td>[b][o]</td><td>[y][r]</td></tr>
+</table>
+<p>
+
+<h4>Creating new columns</h4>
+
+The user should be able to enter new state names into an input field and submit them, after which they are added to the table as a new column. Clicking on the colored boxes will move the box successively from left to right through the new columns. When they reach the right-most column, another click moves them back to the left-most column (A).
+<p>
+Rules for new column names:
+<p>
+<ol>
+<li>no duplicates of existing column names</li>
+<li>first character must be a capital letter between A-F or N-Z</li>
+<li>the leading character may (but is not required to) be followed by a number up to four digits long, which must be separated from the leading character by an underscore or dash if used</li>
+</ol>
+
+<b>OK</b>:  <code>"C" "Z" "N-1234"</code><br/>
+<b>BAD</b>: <code>"c" "I" "C1234"</code>
+<p>
+<b>Example table:</b> adding state "N-1234" and clicking [o] to move it to the new column</b>
+<table>
+<tr><th>A (6)</th><th>B (5)</th><th>N-1234 (5)</th></tr>
+<tr><td>[b]</td><td>[y][r]</td><td>[o]</td></tr>
+<tr><td>[y][r][o]</td><td>[b]</td><td>&nbsp;</td></tr>
+<tr><td>[b][o]</td><td>[y][r]</td><td>&nbsp;</td></tr>
+</table>
+
+
+
+<h4>Regenerating rows.json</h4>
+Finally, there should be a clickable button/link, which will cause rows.json to be regenerated based on the current state of the table. The updated json can be displayed in a modal or in a text area.
+<p>
+<h3>Good Luck!</h3>
+</body>
+</div>
+</html>
