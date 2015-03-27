@@ -1,0 +1,36 @@
+body {
+    background: #e3e3e3;
+}
+
+table {
+    border-collapse: collapse;
+    td, th {
+        border: 1px solid #999;
+        padding: .5em;
+        div {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border: 1px solid #aaa;
+        }
+    }
+    td {
+        text-align: left;
+    }
+    th {
+        text-align: center;
+    }
+}
+
+.blue {
+    background: blue;
+}
+.yellow {
+    background: yellow;
+}
+.red {
+    background: red;
+}
+.green {
+    background: green;
+}

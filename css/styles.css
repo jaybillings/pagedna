@@ -1,0 +1,29 @@
+body {
+  background: #e3e3e3; }
+
+table {
+  border-collapse: collapse; }
+  table td, table th {
+    border: 1px solid #999;
+    padding: .5em; }
+    table td div, table th div {
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      border: 1px solid #aaa; }
+  table td {
+    text-align: left; }
+  table th {
+    text-align: center; }
+
+.blue {
+  background: blue; }
+
+.yellow {
+  background: yellow; }
+
+.red {
+  background: red; }
+
+.green {
+  background: green; }
