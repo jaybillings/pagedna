@@ -1,13 +1,7 @@
+/* === Object partials === */
+
 // Color blocks within cell
-var colorBlock = $$({
-    model: {
-        color: 'blue'
-    },
-    view: {
-        format: '<div data-bind="class=color"></div>'
-    },
-    controller: {}
-});
+var colorBlock = $$({color: 'blue'}, '<div data-bind="class=color"></div>');
 
 // Table cell
 var cell = $$({}, '<td></td>');
@@ -22,13 +16,10 @@ var row = $$({
             "green": "A",
             "yellow": "A",
             "blue": "A"
-        },
-        content: function () {
-            
-        }()
+        }
     },
     view: {
-       format: '<tr data-bind="content"></tr>'
+       format: '<tr></tr>'
     },
     controller: {
         'create': function() {
@@ -40,14 +31,15 @@ var row = $$({
                         var newColorBlock = $$(colorBlock, {color: val});
                         newCell.append(newColorBlock);
                     }
-                })
+                });
                 me.append(newCell);
             }
-            $$.document.append(me, 'table');
+        },
+        'change:states': function () {
+            this.empty();
+            this.trigger('create');
         },
         'click td': function (e) {
-            console.log(this.model.get('states'));
-            console.log(this.model.size());
             var me = this,
                 color = e.target.className,
                 states = me.model.get('states'),
@@ -56,13 +48,25 @@ var row = $$({
                 newColNum = colNum + 1 < me.model.get('columns').length ? colNum + 1 : 0;
             states[color] = me.model.get('columns')[newColNum];
             me.model.set({'states': states});
-            me.view.render();
         }
     }
 });
 
-// Table
+// Table header
+var header = $$({
+    model: {
+        label: 'A',
+        count: 0
+    },
+    view: {
+        format: ''
+    },
+    controller: {}
+});
 
+/* === Root objects === */
+
+// Table
 var table = $$({
     model: {
         columns: ['A', 'B']
@@ -71,7 +75,7 @@ var table = $$({
         format:
         '<table id="dna-table">\
             <tr>\
-                <th>A</th><th>B</th>\
+                <th>A <span data-bind="count"></span></th><th>B <span data-bind="count"></span></th>\
             </tr>\
         </table>'
     },
@@ -80,7 +84,7 @@ var table = $$({
             var me = this;
             $.getJSON("data/rows.json", function (data) {
                 for (var i in data) {
-                    var newRow = $$(row, {sequence: data[i].sequence, states: data[i].states});
+                    var newRow = $$(row, {sequence: data[i].sequence, states: data[i].states, columns: me.model.get('columns')});
                     me.append(newRow);
                 }
             });
@@ -89,7 +93,16 @@ var table = $$({
 });
 $$.document.append(table);
 
-
 // Add column form
+var addCol = $$({
+    model: {},
+    view: {
+        format: ''
+    },
+    controller: {}
+});
 
 // Get JSON form
+var getJSON = $$({
+
+});

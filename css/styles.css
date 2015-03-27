@@ -5,7 +5,8 @@ table {
   border-collapse: collapse; }
   table td, table th {
     border: 1px solid #999;
-    padding: .5em; }
+    padding: .5em;
+    width: 110px; }
     table td div, table th div {
       display: inline-block;
       width: 25px;
