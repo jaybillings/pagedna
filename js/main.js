@@ -1,7 +1,7 @@
 /* === Helper functions == */
 var getCount = function(position) {
     return $('table tr td:nth-child(' + position + ') div').length;
-}
+};
 
 /* === Object partials === */
 
@@ -53,6 +53,7 @@ var row = $$({
                 newColNum = colNum + 1 < me.model.get('columns').length ? colNum + 1 : 0;
             states[color] = me.model.get('columns')[newColNum];
             me.model.set({'states': states});
+            this.parent().trigger('updateCount');
         }
     }
 });
@@ -61,14 +62,17 @@ var row = $$({
 var rowHeader = $$({
     model: {
         label: 'A',
-        count: -1
+        count: '0'
     },
     view: {
         format: '<th><span data-bind="label"></span> (<span data-bind="count"></span>)</th>'
     },
     controller: {
-        'click table': function () {
-            console.log('MOO!');
+        'create': function() {
+            var me = this;
+            this.bind('updateCount', function(params, count) {
+               me.model.set({'count': count.toString()});
+            });
         }
     }
 });
@@ -81,8 +85,7 @@ var table = $$({
         columns: ['A', 'B']
     },
     view: {
-        format:
-        '<table id="dna-table"><tr></tr></table>'
+        format: '<table id="dna-table"><tr></tr></table>'
     },
     controller: {
         'create': function () {
@@ -95,36 +98,26 @@ var table = $$({
                     me.append(newRow);
                     // Count blocks
                     $.each(data[i].states, function (j, val) {
-                        if (val === 'A') {
-                            counts[0] += 1;
-                        } else {
-                            counts[1] += 1;
-                        }
+                        var col = me.model.get('columns').indexOf(val);
+                        counts[col] += 1;
                     });
                 }
                 $.each(me.model.get('columns'), function (i, val) {
                     var newHeader = $$(rowHeader, {label: val, count: counts[i]});
                     me.append(newHeader, 'tr:first-child');
+                    me.bind('updateCount', function() {
+                        var count = getCount(i + 1);
+                        newHeader.trigger('updateCount', [count]);
+                    });
                 });
             });
-
-        },
-        'click &': function () {
-            var me = this;
-            $('table tr:first-child').empty();
-            $.each(me.model.get('columns'), function (i, val) {
-                var count = getCount(i + 1);
-                var newHeader = $$(rowHeader, {label: val, count: count});
-                me.append(newHeader, 'tr:first-child');
-            });
-
         }
     }
 });
 $$.document.append(table);
 
 // Add column form
-var addCol = $$({
+var addForm = $$({
     model: {},
     view: {
         format: '<form></form>'
@@ -133,7 +126,7 @@ var addCol = $$({
 });
 
 // Get JSON form
-var getJSON = $$({
+var saveForm = $$({
     model: {},
     view: {
         format: '<form></form>'
