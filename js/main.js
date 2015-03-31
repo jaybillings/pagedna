@@ -1,8 +1,3 @@
-/* === Helper functions == */
-var getCount = function(position) {
-    return $('table tr td:nth-child(' + position + ') div').length;
-};
-
 /* === Object partials === */
 
 // Color blocks within cell
@@ -70,6 +65,7 @@ var rowHeader = $$({
     controller: {
         'create': function() {
             var me = this;
+            // Handle count updates
             this.bind('updateCount', function(params, count) {
                me.model.set({'count': count.toString()});
             });
@@ -82,10 +78,11 @@ var rowHeader = $$({
 // Table
 var table = $$({
     model: {
-        columns: ['A', 'B']
+        columns: ['A', 'B'],
+        rows: []
     },
     view: {
-        format: '<table id="dna-table"><tr></tr></table>'
+        format: '<table id="dna-table"></table>'
     },
     controller: {
         'create': function () {
@@ -96,20 +93,31 @@ var table = $$({
                     // Make rows
                     var newRow = $$(row, {sequence: data[i].sequence, states: data[i].states, columns: me.model.get('columns')});
                     me.append(newRow);
+                    me.model.set({'rows': me.model.get('rows').concat([newRow])});
                     // Count blocks
                     $.each(data[i].states, function (j, val) {
                         var col = me.model.get('columns').indexOf(val);
                         counts[col] += 1;
                     });
                 }
+                // Set headers
+                me.view.$('tr:first-child').before('<tr></tr>');
                 $.each(me.model.get('columns'), function (i, val) {
                     var newHeader = $$(rowHeader, {label: val, count: counts[i]});
                     me.append(newHeader, 'tr:first-child');
+                    // Pass along count updates to header obj
                     me.bind('updateCount', function() {
                         var count = getCount(i + 1);
                         newHeader.trigger('updateCount', [count]);
                     });
                 });
+            });
+            // Bind add column function
+            me.bind('addColumn', function(e, name) {
+                me.model.set({'columns': me.model.get('columns').concat([name])});
+                me.model.set({'rows': []});
+                me.view.$().empty();
+                me.trigger('create');
             });
         }
     }
@@ -118,19 +126,70 @@ $$.document.append(table);
 
 // Add column form
 var addForm = $$({
-    model: {},
-    view: {
-        format: '<form></form>'
+    model: {
+        statusMessage: ''
     },
-    controller: {}
+    view: {
+        format: $('#add-col-template').html()
+    },
+    controller: {
+        'submit form': function (e) {
+            var colName;
+            e.preventDefault();
+
+            colName = this.view.$('input').val();
+            if (table.model.get('columns').indexOf(colName) !== -1) {
+                this.model.set({'statusMessage': 'A column with that name already exists.'})
+            } else if (!nameIsValid(colName)) {
+                this.model.set({'statusMessage': 'SThat column name is not valid.'});
+            } else {
+                table.trigger('addColumn', colName);
+                this.model.set({'statusMessage': 'Trying to set columnName'});
+            }
+        },
+        'focus input': function() {
+            this.view.$('input').val('');
+            this.model.set({'statusMessage': ''});
+        }
+    }
 });
+$$.document.append(addForm);
 
 // Get JSON form
 var saveForm = $$({
-    model: {},
-    view: {
-        format: '<form></form>'
+    model: {
+        tableFormat: ''
     },
-    controller: {}
-});
+    view: {
+        format: $('#save-template').html()
+    },
+    controller: {
+        'submit &': function (e) {
+            var layout = [];
+            e.preventDefault();
 
+            this.view.$().val('');
+            $.each(table.model.get('rows'), function (i, val) {
+                var rowLayout = {};
+                rowLayout.sequence = val.model.get('sequence');
+                rowLayout.states = val.model.get('states');
+                layout.push(rowLayout);
+            });
+
+            this.model.set({'tableFormat': JSON.stringify(layout)});
+            console.log('saved!');
+            console.log(e);
+        }
+    }
+});
+$$.document.append(saveForm);
+
+/* === Helper functions == */
+var getCount = function(position) {
+    return $('table tr td:nth-child(' + position + ') div').length;
+};
+
+var nameIsValid = function(name) {
+    var reg = /^([A-FN-Z])(-\d{1,4})?$/g;
+    return reg.test(name);
+};
