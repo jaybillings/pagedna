@@ -1,18 +1,36 @@
+@import 'colors';
+
 body {
-    background: #e3e3e3;
+    background: darken($gray, 20%);
+    font-family: 'Open Sans', verdana, arial, helvetica, sans-serif;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 2em;
+    background: $gray;
+    border-left: 5px solid darken($gray, 50%);
+    border-right: 5px solid darken($gray, 50%);
 }
 
 table {
     border-collapse: collapse;
+    margin: 0 auto 2em;
+
     td, th {
-        border: 1px solid #999;
+        border: 1px solid $black;
         padding: .5em;
-        width: 115px;
+        width: 116px;
         div {
             display: inline-block;
             width: 25px;
             height: 25px;
-            border: 1px solid #aaa;
+            margin: 1px;
+            border: 1px solid $black;
         }
     }
     td {
@@ -23,15 +41,52 @@ table {
     }
 }
 
+.forms-container {
+    vertical-align: top;
+    & > div {
+        width: 100%;
+        text-align: center;
+        margin: 1em;
+
+        label {
+            display: block;
+            margin-bottom: .5em;
+        }
+    }
+
+    .save-form {
+        textarea {
+            width: 520px;
+            height: 100px;
+            padding: 1em;
+        }
+        button {
+            display: block;
+            margin: 0 auto;
+        }
+    }
+
+    .status {
+        display: none;
+        width: 30%;
+        font-size: .8em;
+        border: 1px solid $red;
+        background: lighten($red, 30%);
+        color: lighten($black, 10%);
+        margin: 0 auto 1em;
+        padding: .5em;
+    }
+}
+
 .blue {
-    background: blue;
+    background: $blue;
 }
 .yellow {
-    background: yellow;
+    background: $yellow;
 }
 .red {
-    background: red;
+    background: $red;
 }
 .green {
-    background: green;
+    background: $green;
 }
